@@ -58,6 +58,7 @@ extern "C" {
 #define INPLACE_AND              77
 #define INPLACE_XOR              78
 #define INPLACE_OR               79
+#define NOTJS                    80
 #define WITH_CLEANUP_START       81
 #define WITH_CLEANUP_FINISH      82
 #define RETURN_VALUE             83

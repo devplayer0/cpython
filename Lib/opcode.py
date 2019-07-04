@@ -125,6 +125,8 @@ def_op('POP_BLOCK', 87)
 def_op('END_FINALLY', 88)
 def_op('POP_EXCEPT', 89)
 
+def_op('NOTJS', 80)
+
 HAVE_ARGUMENT = 90              # Opcodes from here have an argument:
 
 name_op('STORE_NAME', 90)       # Index in name list

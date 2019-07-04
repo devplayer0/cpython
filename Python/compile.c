@@ -1123,6 +1123,8 @@ stack_effect(int opcode, int oparg, int jump)
             return (oparg & FVS_MASK) == FVS_HAVE_SPEC ? -1 : 0;
         case LOAD_METHOD:
             return 1;
+        case NOTJS:
+            return 0;
         default:
             return PY_INVALID_STACK_EFFECT;
     }
@@ -3268,6 +3270,8 @@ compiler_visit_stmt(struct compiler *c, stmt_ty s)
         break;
     case Expr_kind:
         return compiler_visit_stmt_expr(c, s->v.Expr.value);
+    case Notjs_kind:
+        ADDOP(c, NOTJS);
     case Pass_kind:
         break;
     case Break_kind:

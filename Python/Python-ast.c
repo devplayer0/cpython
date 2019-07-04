@@ -202,6 +202,7 @@ static PyTypeObject *Expr_type;
 static char *Expr_fields[]={
     "value",
 };
+static PyTypeObject *Notjs_type;
 static PyTypeObject *Pass_type;
 static PyTypeObject *Break_type;
 static PyTypeObject *Continue_type;
@@ -907,6 +908,8 @@ static int init_types(void)
     if (!Nonlocal_type) return 0;
     Expr_type = make_type("Expr", stmt_type, Expr_fields, 1);
     if (!Expr_type) return 0;
+    Notjs_type = make_type("Notjs", stmt_type, NULL, 0);
+    if (!Notjs_type) return 0;
     Pass_type = make_type("Pass", stmt_type, NULL, 0);
     if (!Pass_type) return 0;
     Break_type = make_type("Break", stmt_type, NULL, 0);
@@ -1778,6 +1781,22 @@ Expr(expr_ty value, int lineno, int col_offset, int end_lineno, int
         return NULL;
     p->kind = Expr_kind;
     p->v.Expr.value = value;
+    p->lineno = lineno;
+    p->col_offset = col_offset;
+    p->end_lineno = end_lineno;
+    p->end_col_offset = end_col_offset;
+    return p;
+}
+
+stmt_ty
+Notjs(int lineno, int col_offset, int end_lineno, int end_col_offset, PyArena
+      *arena)
+{
+    stmt_ty p;
+    p = (stmt_ty)PyArena_Malloc(arena, sizeof(*p));
+    if (!p)
+        return NULL;
+    p->kind = Notjs_kind;
     p->lineno = lineno;
     p->col_offset = col_offset;
     p->end_lineno = end_lineno;
@@ -3185,6 +3204,10 @@ ast2obj_stmt(void* _o)
         if (_PyObject_SetAttrId(result, &PyId_value, value) == -1)
             goto failed;
         Py_DECREF(value);
+        break;
+    case Notjs_kind:
+        result = PyType_GenericNew(Notjs_type, NULL, NULL);
+        if (!result) goto failed;
         break;
     case Pass_kind:
         result = PyType_GenericNew(Pass_type, NULL, NULL);
@@ -6169,6 +6192,16 @@ obj2ast_stmt(PyObject* obj, stmt_ty* out, PyArena* arena)
         if (*out == NULL) goto failed;
         return 0;
     }
+    isinstance = PyObject_IsInstance(obj, (PyObject*)Notjs_type);
+    if (isinstance == -1) {
+        return 1;
+    }
+    if (isinstance) {
+
+        *out = Notjs(lineno, col_offset, end_lineno, end_col_offset, arena);
+        if (*out == NULL) goto failed;
+        return 0;
+    }
     isinstance = PyObject_IsInstance(obj, (PyObject*)Pass_type);
     if (isinstance == -1) {
         return 1;
@@ -8837,6 +8870,8 @@ PyInit__ast(void)
     if (PyDict_SetItemString(d, "Nonlocal", (PyObject*)Nonlocal_type) < 0)
         return NULL;
     if (PyDict_SetItemString(d, "Expr", (PyObject*)Expr_type) < 0) return NULL;
+    if (PyDict_SetItemString(d, "Notjs", (PyObject*)Notjs_type) < 0) return
+        NULL;
     if (PyDict_SetItemString(d, "Pass", (PyObject*)Pass_type) < 0) return NULL;
     if (PyDict_SetItemString(d, "Break", (PyObject*)Break_type) < 0) return
         NULL;

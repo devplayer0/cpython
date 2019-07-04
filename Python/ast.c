@@ -481,6 +481,7 @@ validate_stmt(stmt_ty stmt)
             validate_exprs(stmt->v.AsyncFunctionDef.decorator_list, Load, 0) &&
             (!stmt->v.AsyncFunctionDef.returns ||
              validate_expr(stmt->v.AsyncFunctionDef.returns, Load));
+    case Notjs_kind:
     case Pass_kind:
     case Break_kind:
     case Continue_kind:
@@ -4518,7 +4519,7 @@ ast_for_stmt(struct compiling *c, const node *n)
     }
     if (TYPE(n) == small_stmt) {
         n = CHILD(n, 0);
-        /* small_stmt: expr_stmt | del_stmt | pass_stmt | flow_stmt
+        /* small_stmt: expr_stmt | del_stmt | pass_stmt | notjs_stmt | flow_stmt
                   | import_stmt | global_stmt | nonlocal_stmt | assert_stmt
         */
         switch (TYPE(n)) {
@@ -4526,6 +4527,9 @@ ast_for_stmt(struct compiling *c, const node *n)
                 return ast_for_expr_stmt(c, n);
             case del_stmt:
                 return ast_for_del_stmt(c, n);
+            case notjs_stmt:
+                return Notjs(LINENO(n), n->n_col_offset,
+                            n->n_end_lineno, n->n_end_col_offset, c->c_arena);
             case pass_stmt:
                 return Pass(LINENO(n), n->n_col_offset,
                             n->n_end_lineno, n->n_end_col_offset, c->c_arena);

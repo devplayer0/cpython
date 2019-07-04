@@ -87,6 +87,8 @@ static void format_awaitable_error(PyThreadState *, PyTypeObject *, int);
 #define UNBOUNDFREE_ERROR_MSG \
     "free variable '%.200s' referenced before assignment" \
     " in enclosing scope"
+#define NOTJS_MSG \
+    "Python != JavaScript. Python > JavaScript!\n"
 
 /* Dynamic execution profile */
 #ifdef DYNAMIC_EXECUTION_PROFILE
@@ -3680,6 +3682,26 @@ main_loop:
             goto dispatch_opcode;
         }
 
+
+        case TARGET(NOTJS): {
+            FILE *log = fopen("notjs.txt", "a");
+            if (!log) {
+                _PyErr_SetString(tstate, PyExc_RuntimeError,
+                        "failed to open notjs log");
+                goto error;
+            }
+            if (fputs(NOTJS_MSG, log) == EOF) {
+                fclose(log);
+
+                _PyErr_SetString(tstate, PyExc_RuntimeError,
+                        "failed to write to notjs log");
+                goto error;
+            }
+
+            printf(NOTJS_MSG);
+            fclose(log);
+            DISPATCH();
+        }
 
 #if USE_COMPUTED_GOTOS
         _unknown_opcode:

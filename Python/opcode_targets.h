@@ -79,7 +79,7 @@ static void *opcode_targets[256] = {
     &&TARGET_INPLACE_AND,
     &&TARGET_INPLACE_XOR,
     &&TARGET_INPLACE_OR,
-    &&_unknown_opcode,
+    &&TARGET_NOTJS,
     &&TARGET_WITH_CLEANUP_START,
     &&TARGET_WITH_CLEANUP_FINISH,
     &&TARGET_RETURN_VALUE,

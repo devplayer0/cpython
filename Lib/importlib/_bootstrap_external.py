@@ -268,6 +268,7 @@ _code_type = type(_write_atomic.__code__)
 #     Python 3.8a1  3410 (PEP570 Python Positional-Only Parameters #36540)
 #     Python 3.8b2  3411 (Reverse evaluation order of key: value in dict
 #                         comprehensions #35224)
+#     Python .....  3500 (Add notjs statement)
 #
 # MAGIC must change whenever the bytecode emitted by the compiler may no
 # longer be understood by older implementations of the eval loop (usually
@@ -276,7 +277,7 @@ _code_type = type(_write_atomic.__code__)
 # Whenever MAGIC_NUMBER is changed, the ranges in the magic_values array
 # in PC/launcher.c must also be updated.
 
-MAGIC_NUMBER = (3411).to_bytes(2, 'little') + b'\r\n'
+MAGIC_NUMBER = (3500).to_bytes(2, 'little') + b'\r\n'
 _RAW_MAGIC_NUMBER = int.from_bytes(MAGIC_NUMBER, 'little')  # For import.c
 
 _PYCACHE = '__pycache__'
